@@ -1,0 +1,209 @@
+#################### Linear Regression ####################
+
+#No correlation
+
+  #Correlation fish
+    y<-c(0.18,0.22,0.21,0.38,0.46,0.5,0.58,0.8,0.8)
+    x<-c(26,27,28,32,36,37,36.5,40,41)
+
+    m<-lm(y~x)
+    summary(m)
+    anova(m)
+    r<-m[[1]][1]+m[[1]][2]*x
+    plot(x,y,las=1,xlab="Length (mm)",ylab="wet weight (g)",bty="l",type="n",xaxt="n",cex.lab=1.3)
+    axis(side=1,at=seq(26,41,2),labels=seq(26,41,2))
+    points(x,y,pch=19)
+    abline(m[[1]][1],m[[1]][2])
+    lines(c(-1,x,7),rep(mean(y),times=length(x)+2),lty=3)
+
+  #Predict
+    xp<-seq(min(x),max(x))
+    p<-predict(m,newdata=data.frame(x=xp),interval = c("confidence"),level = 0.95,type="response")
+    lines(xp,p[,2],col="red",lty=2)
+    lines(xp,p[,3],col="red",lty=2)
+
+  #SST
+    segments(x[seq(1,max(length(x)),1)],y[seq(1,max(length(y)),1)],
+    x[seq(1,max(length(x)),1)],mean(y),"red",lty=3)
+
+    segments(x[seq(1,max(length(x)),1)]+0.05,y[seq(1,max(length(y)),1)],
+    x[seq(1,max(length(x)),1)]+0.05,mean(y),"red",lty=3)
+
+
+  #SSres
+  segments(x[seq(1,max(length(x)),1)],y[seq(1,max(length(y)),1)],
+  x[seq(1,max(length(x)),1)],r[seq(1,max(length(r)),1)],col="red")
+
+  #Line to zero
+  func<-function(a,b,x){
+    z<-NULL
+    for (i in 1:length(x)){
+      z[i]<-a +b*x[i]
+    }
+    z
+  }
+
+
+  ND<-seq(0,41,1)
+  P<-func(m[[1]][1],m[[1]][2],ND)
+  plot(ND,P,ylab="wet weight (g)", xlab="Length (mm)", las=1,type="l",bty="l",cex.lab=1.3)  
+
+  #Get some scatter around the plot
+    a<-m[[1]][1]
+    b<-m[[1]][2]
+    y1<-rnorm(10,func(a,b,x[1]),0.02)
+    y2<-rnorm(10,func(a,b,x[2]),0.02)
+    y3<-rnorm(10,func(a,b,x[3]),0.02)
+    y4<-rnorm(10,func(a,b,x[4]),0.02)
+    y5<-rnorm(10,func(a,b,x[5]),0.02)
+    y6<-rnorm(10,func(a,b,x[6]),0.02)
+    y7<-rnorm(10,func(a,b,x[7]),0.02)
+    y8<-rnorm(10,func(a,b,x[8]),0.02)
+    y9<-rnorm(10,func(a,b,x[9]),0.02)
+    ysc<-c(y1,y2,y3,y4,y5,y6,y7,y8,y9)
+    xsc<-rep(c(x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]),each=10)
+
+    plot(xsc,ysc,las=1,xlab="Length (mm)",ylab="wet weight (g)",bty="l",type="n",xaxt="n",cex.lab=1.3)
+    axis(side=1,at=seq(26,41,2),labels=seq(26,41,2))
+    points(xsc,ysc,pch=19)
+    abline(m[[1]][1],m[[1]][2])
+
+  #No correlation between y and x
+    x<-c(16,17,18,19,20,21,16,17,18,19,20,21)
+    y<-c(19,19,19,19,19,19,21,21,21,21,21,21)
+    m<-lm(y~x)
+    anova(m)
+    r<-m[[1]][1]+m[[1]][2]*x
+    plot(x,y,las=1,xlab="x",ylab="y",bty="l",type="n",cex.lab=1.3)
+    points(x,y,pch=19)
+    abline(m[[1]][1],m[[1]][2],lwd=2)
+    lines(c(-1,x,7),rep(mean(y),times=length(x)+2),lty=3) #mean line
+
+
+  #SST
+      segments(x[seq(1,max(length(x)),1)],y[seq(1,max(length(y)),1)],
+      x[seq(1,max(length(x)),1)],mean(y),col="red")
+
+      segments(x[seq(1,max(length(x)),1)]+20,y[seq(1,max(length(y)),1)],
+      x[seq(1,max(length(x)),1)]+20,mean(y))
+
+
+  #SSres
+      segments(x[seq(1,max(length(x)),1)],y[seq(1,max(length(y)),1)],
+      x[seq(1,max(length(x)),1)],r[seq(1,max(length(r)),1)],col="red")
+
+
+  ### Confidence interval ####
+      SE.func<-function(MSR,n,x,xm,SSX){
+      sqrt(MSR*(1/n+((x-xm)^2/SSX)))
+      }
+      SE.func(0.004,9,26,33.72,256.66)
+      xp<-seq(min(x),max(x),0.01)
+      yp<-(m[[1]][1])+(m[[1]][2]*xp)
+      SE<-NULL
+      for (i in 1:length(xp)){
+      SE[i]<-SE.func(0.004,9,xp[i],mean(x),256.66)
+      }
+
+      t<-rep(2.365,length(xp))
+      CI.U<-yp+(t*SE)
+      CI.l<-yp-(t*SE)
+      lines(xp,CI.U,lty=3)
+      lines(xp,CI.l,lty=3)
+
+  #Confidence interval for individual values ##########
+      SE.func<-function(MSR,n,x,xm,SSX){
+      sqrt(MSR*(1+(1/n)+((x-xm)^2/SSX)))
+      }
+      xp<-seq(min(x),max(x),0.01)
+      yp<-(m[[1]][1])+(m[[1]][2]*xp)
+      SE<-NULL
+      for (i in 1:length(xp)){
+      SE[i]<-SE.func(0.004,9,xp[i],mean(x),256.66)
+      }
+
+      t<-rep(2.365,length(xp))
+      CI.U<-yp+(t*SE)
+      CI.l<-yp-(t*SE)
+      lines(xp,CI.U,lty=6,lwd=0.5)
+      lines(xp,CI.l,lty=6,lwd=0.5)
+
+  #### Checking assumptions ########
+    #Normality
+      st.res<-rstandard(m)
+      qqnorm(st.res,ylab="Standardized Residuals",xlab="Theoretical",las=1,bty="l") 
+       qqline(st.res)
+
+      x.log<-log(x) #transformation of x
+      m<-lm(y~x.log)
+      st.res<-rstandard(m)
+      qqnorm(st.res,ylab="Standardized Residuals",xlab="Theoretical",las=1,bty="l") 
+       qqline(st.res)
+
+  #Equal variances #
+      plot(m$fitted.values,m$residuals,xlab="Predicted",ylab="Residuals",las=1,bty="l",main="Residual plot")
+      abline(0,0,h=T,lty=3)
+
+  #Independent errors"
+    #lag plot
+      library(s20x)
+      autocor.plot(m)
+
+  #My own
+      res<-m$residuals[1:length(m$residuals)-1]
+      lag<-res[2:length(m$residuals)]
+      plot(lag,res,xlab="Lagged residuals", ylab="residuals",las=1,bty="l")
+
+  #Autocorrelation estimation plot
+      acf(m$residuals,type = "correlation",main="Autocorrelation plot",
+          plot = TRUE,las=1,bty="l")
+
+  ###### Assumption of linearity ######
+      plot(m$fitted.values,y,xlab="Predicted",ylab="Observed",main="Observed vs predicted",las=1,bty="l")
+      abline(0,1,lty=3)
+
+  ###########F distribution###############
+      df <- summary(m)$fstatistic
+      curve(df(x, df1 = df[2], df2 = df[3]), from = 0, to = 100)
+      qf(c(0.025,0.975),df[1],df[2])
+      df(df[1],7,1)
+      fstat <- summary(m)$fstatistic
+
+      library(HH)
+      old.omd <- par(omd=c(.05,.88, .05,1))
+      F.setup(df1=fstat['numdf'], df2=fstat['dendf'],xlim.in=c(0,15))
+      F.curve(df1=fstat['numdf'], df2=fstat['dendf'], col='blue')
+      F.observed(fstat['value'], df1=fstat['numdf'], df2=fstat['dendf'])
+      par(old.omd)
+
+
+      curve(rf(1000,1,7),from=0, to=25)
+      df(1,1,8)
+
+      #Covariance
+        #The variables
+          x<-rnorm(100,50,2)
+          set.seed(1)
+          y<-x*sample(0.2:1)
+          xy<-data.frame(x,y)
+
+
+  #Sum of products
+      SP<-function(x,y){
+        SP.x<-x-mean(x)
+        SP.y<-y-mean(y)
+        SP.xy<-sum(SP.x*SP.y)
+        SP.xy
+      }
+      SP(x,y)
+
+  #Covariance
+      SP<-function(x,y){
+        SP.x<-x-mean(x)
+        SP.y<-y-mean(y)
+        SP.xy<-sum(SP.x*SP.y)
+        SP.xy<-SP.xy/(length(x)-1)
+        SP.xy
+      }
+      SP(x,y)
+
