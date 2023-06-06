@@ -3,7 +3,7 @@
 #1. Import the data
 
   setwd("C:\\Parametric tests\\ANOVA")
-  data2<-read.csv("ANOVA_data.csv",dec=",",sep=";")
+  data2<-read.csv("ANOVA_data.csv",dec=".",sep=",")
 
 
 #2. Do the ANOVA
