@@ -1,0 +1,4 @@
+# Statistical-Tests-with-R
+Under the summer 2013, I wrote down my insights from years of experience of applied statistics. I figured it is a waste this material sits on my google drive, and decided I should share it. The content is published on LinkedIn as a series of articles. The goal with this material has been to get down to the core, the key essentials to help you on the way when it comes to statistical tests by the help of the r programming language. This series is for those who want to learn statistical theory for conducting and understanding the basis of statistical analysis. I will focus on basic concepts within statistics in the first articles, and later moving on to different types of tests and data visualizations using r. 
+The code presented in the articles, and more, is available in this repository.
+Follow me on LinkedIn: https://lnkd.in/dg52uKTh
